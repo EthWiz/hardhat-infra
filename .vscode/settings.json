@@ -1,0 +1,8 @@
+
+{
+    "solidity.soliumRules": {
+        "solidity.linter": false,
+        "whitespace": "off",
+        "no-trailing-whitespace": "off"
+    }
+}
