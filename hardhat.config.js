@@ -29,6 +29,10 @@ module.exports = {
   networks: {
     hardhat: {
       initialBaseFeePerGas: 0, // workaround from https://github.com/sc-forks/solidity-coverage/issues/652#issuecomment-896330136 . Remove when that issue is closed.
+      forking: {
+        enabled: true,
+        url: `https://rinkeby.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID}`,
+      },
     },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
