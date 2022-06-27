@@ -39,6 +39,15 @@ module.exports = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID}`,
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    // ganache: {
+    //   // port: '8545',
+    //   // url: 'HTTP://127.0.0.1:8545'
+    // },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
