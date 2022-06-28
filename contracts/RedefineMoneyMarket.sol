@@ -3,8 +3,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract RedefineMoneyMarket {
+contract RedefineMoneyMarket is ReentrancyGuard {
 
     // Parameters
     
@@ -26,16 +27,6 @@ contract RedefineMoneyMarket {
 
 
     // Modifiers
-
-    /**
-    * @dev Reentrancy guard
-    */
-    modifier lock() {
-        require(_locked == 0, "LOCKED");
-        _locked = 1;
-        _;
-        _locked = 0;
-    }
 
     /**
     * @dev Only owner guard
@@ -84,7 +75,7 @@ contract RedefineMoneyMarket {
     /**
     * @dev Deposits the asset into the staking protocol
     */
-    function deposit(uint256 amount) external lock returns (bool success) {
+    function deposit(uint256 amount) external nonReentrant returns (bool success) {
         // uint256 balanceOf = IERC20(_asset).balanceOf(msg.sender);
         // require(balanceOf >= amount, "User has less than requested deposit amount");
         success = false;
@@ -104,7 +95,7 @@ contract RedefineMoneyMarket {
     /**
     * @dev Withdraws the asset from the staking protocol 
     */
-    function withdraw(uint256 amount) external lock returns (bool success) {
+    function withdraw(uint256 amount) external nonReentrant returns (bool success) {
         success = false;
         require(staked_balance[msg.sender] >= amount, "Cannot withdraw more than staked balance");
 
