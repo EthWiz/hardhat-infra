@@ -102,7 +102,7 @@ contract RedefineMoneyMarket {
 
 
     /**
-    * @dev Withdraws the asset from the staking protocol
+    * @dev Withdraws the asset from the staking protocol 
     */
     function withdraw(uint256 amount) external lock returns (bool success) {
         success = false;
