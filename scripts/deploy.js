@@ -1,25 +1,59 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
+// npx hardhat run scripts\deploy.js --network hardhat
+
 const hre = require("hardhat");
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
 
-  // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  // owner, deployer, operator
+  const [owner] = await hre.ethers.getSigners();
+  console.log("Owner address:", owner.address);
 
-  await greeter.deployed();
+  // Token
+  let totalSupply = 10000
 
-  console.log("Greeter deployed to:", greeter.address);
+  const RedefineToken = await hre.ethers.getContractFactory("RedefineToken");
+  const token = await RedefineToken.deploy(totalSupply);
+
+  await token.deployed();
+
+  console.log("RedefineToken deployed to:", token.address);
+
+  const ownerBalance = await token.balanceOf(owner.address);
+
+  console.log("Balance of owner:", ownerBalance);
+
+
+  // Staking Contract
+
+  const RedefineMoneyMarket = await hre.ethers.getContractFactory(
+    "RedefineMoneyMarket"
+  );
+  const contract = await RedefineMoneyMarket.deploy(token.address);
+
+  await contract.deployed();
+
+  console.log("RedefineMoneyMarket deployed to:", contract.address);
+
+  const contractOwner = await contract.owner();
+
+  console.log("Contract owner:", contractOwner);
+
+  const contractAsset = await contract.asset();
+
+  console.log("Contract asset:", contractAsset);
+
+  let amount = totalSupply/2
+  let txn = await token.approve(contract.address, amount);
+  // const receipt = await txn.wait();
+  // console.log(receipt)
+  
+  let txn2 = await contract.deposit(amount);
+  // const receipt = await txn2.wait();
+  // console.log(receipt)
+
+  let st = await contract.staked_balance(owner.address);
+  console.log('Staked balance of owner:', st)
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
