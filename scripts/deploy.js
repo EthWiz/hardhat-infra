@@ -10,7 +10,7 @@ async function main() {
 
   // Token
   let totalSupply = 10000
-
+  console.log('Setting total supply to:', totalSupply)
   const RedefineToken = await hre.ethers.getContractFactory("RedefineToken");
   const token = await RedefineToken.deploy(totalSupply);
 
@@ -18,8 +18,7 @@ async function main() {
 
   console.log("RedefineToken deployed to:", token.address);
 
-  const ownerBalance = await token.balanceOf(owner.address);
-
+  let ownerBalance = await token.balanceOf(owner.address);
   console.log("Balance of owner:", ownerBalance);
 
 
@@ -43,17 +42,32 @@ async function main() {
   console.log("Contract asset:", contractAsset);
 
   let amount = totalSupply/2
+  console.log('Approving:', amount)
   let txn = await token.approve(contract.address, amount);
+  let allowance = await token.allowance(owner.address, contract.address);
+  console.log('Allowance:', allowance)
   // const receipt = await txn.wait();
   // console.log(receipt)
   
+  console.log('Depositing:', amount)
   let txn2 = await contract.deposit(amount);
   // const receipt = await txn2.wait();
   // console.log(receipt)
 
   let st = await contract.staked_balance(owner.address);
   console.log('Staked balance of owner:', st)
+  ownerBalance = await token.balanceOf(owner.address);
+  console.log("Balance of owner:", ownerBalance);
+  
+  amount = parseInt(totalSupply/3)
+  console.log('Withdrawing:', amount)
+  let txn3 = await contract.withdraw(amount);
+  
+  st = await contract.staked_balance(owner.address);
+  console.log('Staked balance of owner:', st)
 
+  ownerBalance = await token.balanceOf(owner.address);
+  console.log("Balance of owner:", ownerBalance);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

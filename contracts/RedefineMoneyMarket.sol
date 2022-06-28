@@ -99,4 +99,20 @@ contract RedefineMoneyMarket {
         emit Deposit(msg.sender, amount);
         success = true;
     }
+
+
+    /**
+    * @dev Withdraws the asset from the staking protocol
+    */
+    function withdraw(uint256 amount) external lock returns (bool success) {
+        success = false;
+        require(staked_balance[msg.sender] >= amount, "Cannot withdraw more than staked balance");
+
+        bool transferred = IERC20(_asset).transfer(msg.sender, amount);
+        require(transferred, "Error transferring funds");
+        staked_balance[msg.sender] -= amount;
+
+        emit Withdraw(msg.sender, amount);
+        success = true;
+    }
 }
