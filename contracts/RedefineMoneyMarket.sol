@@ -47,9 +47,9 @@ contract RedefineMoneyMarket {
 
     // Constructor
 
-    constructor (address _token) {
+    constructor (address tokenAddress) {
         
-        _asset = _token;
+        _asset = tokenAddress;
         _owner = msg.sender;
         emit OwnerChanged(_owner);
     }
@@ -75,8 +75,8 @@ contract RedefineMoneyMarket {
     /**
     * @dev Sets a new owner for the staking contract
     */
-    function setOwner(address _newOwner) external onlyOwner {
-        _owner = _newOwner;
+    function setOwner(address newOwner) external onlyOwner {
+        _owner = newOwner;
         emit OwnerChanged(_owner);
     }
 
