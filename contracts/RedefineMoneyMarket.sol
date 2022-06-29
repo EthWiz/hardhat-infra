@@ -2,14 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./StakingContract.sol";
 
-contract RedefineMoneyMarket is ReentrancyGuard {
+contract RedefineMoneyMarket is StakingContract {
 
     // Parameters
     
-    address private _asset;
     address private _owner;
     uint256 private _locked = 0;
 
@@ -17,13 +15,6 @@ contract RedefineMoneyMarket is ReentrancyGuard {
     // Events
 
     event OwnerChanged(address indexed owner);
-    event Deposit(address indexed user, uint256 amount);
-    event Withdraw(address indexed user, uint256 amount);
-
-
-    // Mappings
-
-    mapping(address => uint256) public staked_balance;
 
 
     // Modifiers
@@ -38,9 +29,8 @@ contract RedefineMoneyMarket is ReentrancyGuard {
 
     // Constructor
 
-    constructor (address tokenAddress) {
-        
-        _asset = tokenAddress;
+    constructor (address tokenAddress) StakingContract(tokenAddress) {
+        // _asset = tokenAddress;
         _owner = msg.sender;
         emit OwnerChanged(_owner);
     }
@@ -56,14 +46,6 @@ contract RedefineMoneyMarket is ReentrancyGuard {
     }
 
     /**
-    * @dev Returns the current staking asset of this contract
-    */
-
-    function asset() public view returns (address) {
-        return _asset;
-    }
-
-    /**
     * @dev Sets a new owner for the staking contract
     */
     function setOwner(address newOwner) external onlyOwner {
@@ -71,39 +53,4 @@ contract RedefineMoneyMarket is ReentrancyGuard {
         emit OwnerChanged(_owner);
     }
 
-
-    /**
-    * @dev Deposits the asset into the staking protocol
-    */
-    function deposit(uint256 amount) external nonReentrant returns (bool success) {
-        // uint256 balanceOf = IERC20(_asset).balanceOf(msg.sender);
-        // require(balanceOf >= amount, "User has less than requested deposit amount");
-        success = false;
-
-        uint256 allowance = IERC20(_asset).allowance(msg.sender, address(this)); // not necessarily gas efficient
-        require(allowance >= amount, "User allowed less than requested deposit amount");
-
-        bool transferred = IERC20(_asset).transferFrom(msg.sender, address(this), amount);
-        require(transferred, "Error transferring funds");
-        staked_balance[msg.sender] += amount;
-
-        emit Deposit(msg.sender, amount);
-        success = true;
-    }
-
-
-    /**
-    * @dev Withdraws the asset from the staking protocol 
-    */
-    function withdraw(uint256 amount) external nonReentrant returns (bool success) {
-        success = false;
-        require(staked_balance[msg.sender] >= amount, "Cannot withdraw more than staked balance");
-
-        bool transferred = IERC20(_asset).transfer(msg.sender, amount);
-        require(transferred, "Error transferring funds");
-        staked_balance[msg.sender] -= amount;
-
-        emit Withdraw(msg.sender, amount);
-        success = true;
-    }
 }

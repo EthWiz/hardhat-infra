@@ -1,5 +1,6 @@
 
 {
+    "explorer.autoReveal": false,
     "solidity.soliumRules": {
         "solidity.linter": false,
         "whitespace": "off",

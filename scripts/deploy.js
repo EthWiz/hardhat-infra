@@ -58,7 +58,7 @@ async function main() {
   console.log('Staked balance of owner:', st)
   ownerBalance = await token.balanceOf(owner.address);
   console.log("Balance of owner:", ownerBalance);
-  
+
   amount = parseInt(totalSupply/3)
   console.log('Withdrawing:', amount)
   let txn3 = await contract.withdraw(amount);
@@ -68,6 +68,27 @@ async function main() {
 
   ownerBalance = await token.balanceOf(owner.address);
   console.log("Balance of owner:", ownerBalance);
+
+
+  // Proxy contract
+
+  const RedefineMoneyMarketProxy = await hre.ethers.getContractFactory(
+    "RedefineMoneyMarketProxy"
+  );
+  const proxy = await hre.upgrades.deployProxy(RedefineMoneyMarketProxy, {
+    initializer: "initialize",
+  });
+
+  await proxy.deployed();
+
+  console.log("RedefineMoneyMarketProxy deployed to:", proxy.address);
+  
+  const RedefineMoneyMarketUpgrade = await hre.ethers.getContractFactory(
+    "RedefineMoneyMarketUpgrade"
+  );
+  console.log("Upgrading RedefineMoneyMarketProxy");
+  const upgraded = await hre.upgrades.upgradeProxy(proxy.address, RedefineMoneyMarketUpgrade);
+  console.log("Upgraded address:", upgraded.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

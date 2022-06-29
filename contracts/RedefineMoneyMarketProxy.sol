@@ -8,11 +8,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 
 contract RedefineMoneyMarketProxy is Initializable, UUPSUpgradeable, OwnableUpgradeable {
-   uint256 public temp;
 
       ///@dev no constructor in upgradable contracts. Instead we have initializers
-   function initialize(uint256 _temp) public initializer {
-       temp = _temp;
+   function initialize() public initializer {
 
       ///@dev as there is no constructor, we need to initialise the OwnableUpgradeable explicitly
        __Ownable_init();
